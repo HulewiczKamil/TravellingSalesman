@@ -12,11 +12,11 @@ private:
 public:
 	Graph();
 	~Graph();
-	void GenerateRandomGraph(int cities);
+	void GenerateRandomGraph(int verteciesNumber, int maxValue, bool isSymetrical);
 	int getVerteciesAmount();
 	int** getGraphMatrix();
 	void display();
-	bool uploadGraph(string filePath);
-	
+	bool readFromFile(string filePath);
+	void deleteGraph();
 };
 

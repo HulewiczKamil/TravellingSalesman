@@ -5,6 +5,8 @@
 #include <ctime>
 
 #include "Graph.h"
+#include "BruteForce.h"
+#include "BranchAndBoundv1.h"
 
 using namespace std;
 
@@ -21,15 +23,15 @@ int main() {
 	string file;
 	Graph graph;
 
+
 	while (chosenOption != 0) {
 		cout << "-------------------------------" << endl;
 		cout << "1> Generate Random Graph" << endl;
 		cout << "2> Read Graph from file" << endl;
-		cout << "3> Display Graph" << endl;
-		cout << "4> Brute Force" << endl;
-		cout << "5> Branch'n'Bound" << endl;
-		cout << "5> Branch'n'Boundv2" << endl;
-		cout << "6> Dynamic Programming" << endl;
+		cout << "3> Perform Brute Force for TSP" << endl;
+		cout << "4> Preform Branch'n'Bound () for TSP" << endl;
+		cout << "5> Perform Branch'n'Bound () for TSP" << endl;
+		cout << "6> Perform Dynamic Programming for TSP" << endl;
 		cout << "0> Exit" << endl;
 		cout << "-------------------------------" << endl;
 		cin >> chosenOption;
@@ -38,18 +40,18 @@ int main() {
 			case 0: {} break;
 
 			case 1: {
-				//cout << endl << "Enter amount of cities for TSP:    ";
-				//cin >> cities;
-				//cout << endl << "Enter max distance between cities:    ";
-				//cin >> maxDistance;
-				cout << endl << "Shall graph be symmertical? [1/0]:    ";
+				cout << endl << "Enter amount of cities for TSP: ";
+				cin >> cities;
+				cout << endl << "Enter max distance between cities: ";
+				cin >> maxDistance;
+				cout << endl << "Shall graph be symmertical? [1/0]: ";
 				cin >> isSymmertical;
 				graph.GenerateRandomGraph(cities, maxDistance, isSymmertical);
 				graph.display();
 			}break;
 
 			case 2: {
-				cout << endl << "Enter file path:   ";
+				cout << endl << "Enter file path: ";
 				cin >> file;
 				filePath.append(file);
 				hasGraphLoaded = graph.readFromFile(filePath);
@@ -61,8 +63,35 @@ int main() {
 					cout << "[ERROR]: File reader encountered a problem" << endl;
 				}
 			}break;
+
 			case 3: {
-				graph.display();
+				BruteForce bruteForce = BruteForce(graph);
+				start = clock();
+				bruteForce.recursiveBruteForce(0);
+				elapsed = clock() - start;
+				cout << "[BEST PATH]:    "; bruteForce.displayPath();
+				cout << "[TIME ELAPSED]: " << elapsed << endl;
+			}break;
+
+			case 4: {
+				BranchAndBoundv1 branchAndBound = BranchAndBoundv1(graph);
+				start = clock();
+				branchAndBound.run();
+				elapsed = clock() - start;
+				cout << "[BEST PATH]:    "; branchAndBound.displayPath();
+				cout << "[TIME ELAPSED]: " << elapsed << endl;
+			}break;
+
+			case 5: {
+				cout << "TBA";
+			}break;
+
+			case 6: {
+				cout << "TBA";
+			}break;
+
+			default: {
+				cout << "\nEnter proper value!\n" << endl;
 			}break;
 		}
 	}

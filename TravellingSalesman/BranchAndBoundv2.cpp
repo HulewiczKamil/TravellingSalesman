@@ -1,4 +1,4 @@
-#include "BranchAndBoundv1.h"
+#include "BranchAndBoundv2.h"
 #include <iostream>
 #include <stack>
 #include <queue>
@@ -69,7 +69,7 @@ Stream& operator<<
 
 using namespace std;
 
-BranchAndBoundv1::BranchAndBoundv1(Graph g) {
+BranchAndBoundv2::BranchAndBoundv2(Graph g) {
 	graph = g;
 	pathToAdjustingCities = new int[graph.getVerteciesAmount()];
 	wasVisited = new bool[graph.getVerteciesAmount()];
@@ -77,22 +77,22 @@ BranchAndBoundv1::BranchAndBoundv1(Graph g) {
 	for (int i = 0; i < graph.getVerteciesAmount(); ++i) {
 		wasVisited[i] = false;
 	}
-	
+
 	upperBound = INT_MAX;
 	int temporaryMinimalValue = INT_MAX;
 	tmpDistance = 0;
 	initialLowerBound = 0;
-	
+
 
 	for (int row = 0; row < graph.getVerteciesAmount(); ++row) {
-		
+
 		for (int column = 0; column < graph.getVerteciesAmount(); ++column) {
-			
+
 			if (graph.getGraphMatrix()[row][column] < temporaryMinimalValue) {
 				temporaryMinimalValue = graph.getGraphMatrix()[row][column];
 			}
 		}
-		
+
 		pathToAdjustingCities[row] = temporaryMinimalValue;
 		initialLowerBound += temporaryMinimalValue;
 		temporaryMinimalValue = INT_MAX;
@@ -100,25 +100,23 @@ BranchAndBoundv1::BranchAndBoundv1(Graph g) {
 
 }
 
-BranchAndBoundv1::~BranchAndBoundv1() {};
+BranchAndBoundv2::~BranchAndBoundv2() {};
 
-void BranchAndBoundv1::run() {
+void BranchAndBoundv2::run() {
 	Node zero = Node(0, initialLowerBound);
 	recursiveBnB(zero);
 };
 
-void BranchAndBoundv1::recursiveBnB(Node node) {
+void BranchAndBoundv2::recursiveBnB(Node node) {
 	tmpPath.push(node.getVertex());
 	wasVisited[node.getVertex()] = true;
 	Node tmpNode;
-	queue<Node> bounds;
+	priority_queue<Node, vector<Node>, Node::CompareLowerBounds> bounds;
 
 	for (int child = 0; child < graph.getVerteciesAmount(); ++child) {
 		if (!wasVisited[child]) {
 			Node n = Node(child, resolveLowerBound(node, child));
 			bounds.push(n);
-			if(n.getLowerBound()<upperBound)
-			recursiveBnB(n);
 		}
 	}
 
@@ -129,10 +127,10 @@ void BranchAndBoundv1::recursiveBnB(Node node) {
 		}
 
 	}
-	else{
+	else {
 		while (!bounds.empty())
 		{
-			tmpNode = bounds.front();
+			tmpNode = bounds.top();
 			bounds.pop();
 			if (tmpNode.getLowerBound() < upperBound) {
 				recursiveBnB(tmpNode);
@@ -167,14 +165,14 @@ void BranchAndBoundv1::recursiveBnB(Node node) {
 	return 999999;*/
 }
 
-int BranchAndBoundv1::resolveLowerBound(Node node, int nextCity) {
+int BranchAndBoundv2::resolveLowerBound(Node node, int nextCity) {
 	int lowerBound = node.getLowerBound();
 	lowerBound -= pathToAdjustingCities[node.getVertex()];
 	lowerBound += graph.getGraphMatrix()[node.getVertex()][nextCity];
 	return lowerBound;
 }
 
-void BranchAndBoundv1::displayPath() {
+void BranchAndBoundv2::displayPath() {
 	cout << path << endl;
 	cout << "Distance: " << upperBound << endl;
 	/*stack <int> path2;

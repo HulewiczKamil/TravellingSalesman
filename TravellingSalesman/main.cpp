@@ -8,11 +8,12 @@
 #include "Graph.h"
 #include "BruteForce.h"
 #include "BranchAndBoundv1.h"
-
+#include "BranchAndBoundv2.h"
 #include "DynamicProgramming.h"
-#define AGLORITHMS 3
-#define CITIESARRAY 9
-using namespace std;
+#include "Timer.h"
+
+#define AGLORITHMS 4
+#define CITIESARRAY 12
 
 int main() {
 
@@ -22,15 +23,17 @@ int main() {
 	int chosenOption = -1;
 	int cities = 10;
 
-	int totalTime = 0;
+	long long totalTime = 0;
 	int totalIteration = 3;
 
-	string citiesArray[CITIESARRAY] = { "8.txt","10.txt","12.txt","14.txt","16.txt","18.txt","20.txt","22.txt","24.txt"};
-	
+	string citiesText[CITIESARRAY] = { "8.txt","10.txt","12.txt","14.txt","16.txt","18.txt","20.txt","22.txt","24.txt" };
+	int citiesArray[CITIESARRAY] = { 8,9,10,11,12,13,14,16,18,20,22,24 };
 	clock_t start, elapsed;
 	string filePath = R"(D:\dane_pea\test)";
 	string file;
 	Graph graph;
+
+	Timer timer = Timer();
 
 
 	while (chosenOption != 0) {
@@ -63,7 +66,9 @@ int main() {
 		case 2: {
 			cout << endl << "Enter file path: ";
 			cin >> file;
+			filePath = R"(D:\dane_pea\test)";
 			filePath.append(file);
+			cout << filePath << endl;
 			hasGraphLoaded = graph.readFromFile(filePath);
 			if (hasGraphLoaded) {
 				graph.display();
@@ -75,107 +80,166 @@ int main() {
 		}break;
 
 		case 3: {
+			Timer timer = Timer();
 			BruteForce bruteForce = BruteForce(graph);
-			start = clock();
+			timer.start();
 			bruteForce.recursiveBruteForce(0);
-			elapsed = clock() - start;
+			timer.stop();
 			cout << "[BEST PATH]:    "; bruteForce.displayPath();
-			cout << "[TIME ELAPSED]: " << elapsed << endl;
+			cout << "[TIME ELAPSED]: " << timer.timeOfExcecution() << endl;
 		}break;
 
 		case 4: {
+			Timer timer = Timer();
 			BranchAndBoundv1 branchAndBound = BranchAndBoundv1(graph);
-			start = clock();
+			timer.start();
 			branchAndBound.run();
-			elapsed = clock() - start;
+			timer.stop();
 			cout << "[BEST PATH]:    "; branchAndBound.displayPath();
-			cout << "[TIME ELAPSED]: " << elapsed << endl;
+			cout << "[TIME ELAPSED]: " << timer.timeOfExcecution() << endl;
 		}break;
 
 		case 5: {
-			cout << "TBA";
+			Timer timer = Timer();
+			BranchAndBoundv2 branchAndBound2 = BranchAndBoundv2(graph);
+			timer.start();
+			branchAndBound2.run();
+			timer.stop();
+			cout << "[BEST PATH]:    "; branchAndBound2.displayPath();
+			cout << "[TIME ELAPSED]: " << timer.timeOfExcecution() << endl;
 		}break;
 
 		case 6: {
+			Timer timer = Timer();
 			DynamicProgramming dynamicProgramming = DynamicProgramming(graph);
-			start = clock();
-			int totaldistance = dynamicProgramming.resolveShortestPath(1, 0);
-			elapsed = clock() - start;
-			cout << "[LOWEST DIST]:  " << totaldistance << endl;
-			cout << "[TIME ELAPSED]: " << elapsed << endl;
+			timer.start();
+			int totalDistance = dynamicProgramming.resolveShortestPath(1, 0);
+			timer.stop();
+			cout << "[LOWEST DIST]:  " << totalDistance << endl;
+			cout << "[TIME ELAPSED]: " << timer.timeOfExcecution() << endl;
 		}break;
 
 		case 7: {
-			for (int i = 0; i < AGLORITHMS; ++i) {
+			for (int i = 1; i < AGLORITHMS; i+=2) {
 
 				switch (i)
 				{
 				case 0: {
 					//bruteForce
 					cout << endl << "=======   Brute Force   ========" << endl;
-					cout << "[TIME ELAPSED]: ";
-					for (int bf = 0; bf < 3; bf++)
+					for (int bf = 0; bf < 7; bf++)
 					{
-						filePath = R"(D:\dane_pea\test)";
-						filePath.append(citiesArray[bf]);
-						//cout << filePath << endl;
-						hasGraphLoaded = graph.readFromFile(filePath);
-						//graph.display();
-						BruteForce bruteForce = BruteForce(graph);
-						start = clock();
-						bruteForce.recursiveBruteForce(0);
-						elapsed = clock() - start;
-						cout << setw(6) << elapsed << " ";
+						Timer timer1 = Timer();
+						cout << "[TIME ELAPSED]: ";
+						totalTime = 0;
+						for (int j = 0; j < 1; j++) {
+							//filePath = R"(D:\dane_pea\test)";
+							//filePath.append(citiesArray[bf]);
+							//cout << filePath << endl;
+							//hasGraphLoaded = graph.readFromFile(filePath);
+							//graph.display();
+							graph.GenerateRandomGraph(citiesArray[bf], 9999999, false);
+
+							BruteForce bruteForce = BruteForce(graph);
+							timer1.start();
+							bruteForce.recursiveBruteForce(0);
+							timer1.stop();
+							cout << setw(6) << timer1.timeOfExcecution() << " ";
+							totalTime += timer1.timeOfExcecution();
+						}
+						cout << endl << "[TOTAL TIME  ]:" << totalTime /1 << endl;
 					}
 				}break;
 
 				case 1: {
 					//branchAndBound
-					cout << endl << "=======   Branch And Bound   ========" << endl;
-					cout << "[TIME ELAPSED]: ";
-					for (int bnb = 0; bnb < CITIESARRAY; bnb++)
+					
+					cout << endl << "=======   Branch And Bound - Best first  ========" << endl;
+					for (int bnb = 0; bnb < 7; bnb++)
 					{
-						filePath = R"(D:\dane_pea\test)";
-						filePath.append(citiesArray[bnb]);
-						//cout << filePath << endl;
-						hasGraphLoaded = graph.readFromFile(filePath);
-						//graph.display();
-						BranchAndBoundv1 branchAndBound = BranchAndBoundv1(graph);
-						start = clock();
-						branchAndBound.run();
-						elapsed = clock() - start;
-						cout << setw(6) << elapsed << " ";
+						totalTime = 0;
+						cout << "[TIME ELAPSED]: ";
+						Timer timer2 = Timer();
+						for (int j = 0; j < 1000; j++) {
+							//filePath = R"(D:\dane_pea\test)";
+							//filePath.append(citiesText[bnb]);
+							//cout << filePath << endl;
+							//hasGraphLoaded = graph.readFromFile(filePath);
+							//graph.display();
+							graph.GenerateRandomGraph(citiesArray[bnb], 9999999, j%2);
+							BranchAndBoundv2 branchAndBound = BranchAndBoundv2(graph);
+							timer2.start();
+							branchAndBound.run();
+							timer2.stop();
+							//cout << setw(6) << timer2.timeOfExcecution() << " ";
+							totalTime += timer2.timeOfExcecution();
+						}
+						cout << endl << "[TOTAL TIME  ]: " << totalTime / 1000 << endl;
 					}
 				}break;
 
 				case 2: {
 					//dynamicProgramming
 					cout << endl << "=======   Dynamic Programming   ========" << endl;
-					cout << "[TIME ELAPSED]: ";
 					for (int dp = 0; dp < CITIESARRAY; dp++)
 					{
-						filePath = R"(D:\dane_pea\test)";
-						filePath.append(citiesArray[dp]);
-						//cout << filePath << endl;
-						hasGraphLoaded = graph.readFromFile(filePath);
-						//graph.display();
-						DynamicProgramming dynamicProgramming = DynamicProgramming(graph);
-						start = clock();
-						dynamicProgramming.resolveShortestPath(1, 0);
-						elapsed = clock() - start;
-						cout << setw(6) <<elapsed << " ";
+						totalTime = 0;
+						cout << "[TIME ELAPSED]: ";
+						Timer timer3 = Timer();
+						for (int j = 0; j < 1; j++) {
+							//filePath = R"(D:\dane_pea\test)";
+							//filePath.append(citiesText[dp]);
+							//cout << filePath << endl;
+							//hasGraphLoaded = graph.readFromFile(filePath);
+							//graph.display();
+							graph.GenerateRandomGraph(citiesArray[dp], 9999999, false);
+							DynamicProgramming dynamicProgramming = DynamicProgramming(graph);
+							timer3.start();
+							dynamicProgramming.resolveShortestPath(1, 0);
+							timer3.stop();
+							//cout << setw(6) << timer3.timeOfExcecution() << " ";
+							totalTime += timer3.timeOfExcecution();
+						}
+						cout << endl << "[TOTAL TIME  ]:" << totalTime / 1 << endl;
 					}
 					cout << endl;
 				}break;
+
+				case 3: {
+					//branchAndBound
+					cout << endl << "=======   Branch And Bound - DFS   ========" << endl;
+					
+					for (int bnb = 0; bnb < 8; bnb++)
+					{
+						totalTime = 0;
+						cout << "[TIME ELAPSED]: ";
+						Timer timer4 = Timer();
+						for (int j = 0; j < 100; j++) {
+							//filePath = R"(D:\dane_pea\test)";
+							//filePath.append(citiesText[bnb]);
+							//cout << filePath << endl;
+							//hasGraphLoaded = graph.readFromFile(filePath);
+							//graph.display();
+							graph.GenerateRandomGraph(citiesArray[bnb], 9999999, j%2);
+							BranchAndBoundv1 branchAndBound = BranchAndBoundv1(graph);
+							timer4.start();
+							branchAndBound.run();
+							timer4.stop();
+							//cout << setw(6) << timer4.timeOfExcecution() << " ";
+							totalTime += timer4.timeOfExcecution();
+						}
+						cout << endl << "[TOTAL TIME  ]:" << totalTime / 100 << endl;
+					}
 				default:
 					break;
 				}
-			}
-		}break;
+				}
+			}break;
 
 		default: {
 			cout << "\nEnter proper value!\n" << endl;
 		}break;
-	}
+		}
+		}
 	}
 }

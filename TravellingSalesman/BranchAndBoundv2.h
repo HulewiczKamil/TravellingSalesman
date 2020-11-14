@@ -6,7 +6,7 @@
 #include <ostream>
 
 
-class BranchAndBoundv1
+class BranchAndBoundv2
 {
 private:
 
@@ -16,18 +16,19 @@ private:
     Graph graph;
     std::stack<int> path;
     std::stack<int> tmpPath;
-    
+
     int** transposedMatrix;
     bool* wasVisited;
+    int* incomingAndOutgoingPathAvg;
     int* pathToAdjustingCities;
-    int* pathFromAdjustingCities;
     int initialLowerBound;
 
 public:
-    BranchAndBoundv1(Graph graph);
-    ~BranchAndBoundv1();
+    BranchAndBoundv2(Graph graph);
+    ~BranchAndBoundv2();
     void recursiveBnB(Node node);
     int resolveLowerBound(Node node, int nextCity);
+    int resolveLowerBoundv2(Node node, int nextCity);
     void run();
     void displayPath();
 

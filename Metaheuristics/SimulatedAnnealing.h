@@ -4,7 +4,7 @@
 
 #include "Graph.h"
 
-class SimulatedAnneling
+class SimulatedAnnealing
 {
 	int** matrix;
 	int matrixSize;
@@ -14,8 +14,8 @@ class SimulatedAnneling
 	std::vector<int> path;
 
 
-	SimulatedAnneling(Graph g, int time, double coolingCap);
-	~SimulatedAnneling();
+	SimulatedAnnealing(Graph g, int time, double coolingCap);
+	~SimulatedAnnealing();
 
 	void execute();
 	int totalPathLength(std::vector<int> path);

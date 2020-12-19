@@ -6,6 +6,7 @@
 
 class SimulatedAnnealing
 {
+public:
 	int** matrix;
 	int matrixSize;
 	double timeLimit;

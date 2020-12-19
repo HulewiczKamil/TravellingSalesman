@@ -17,65 +17,65 @@ int main()
 	{
 
 		cout << endl;
-		cout << "\n*******************************************\n"
+		cout << "*******************************************\n"
 			"1. Load graph from file\n"
 			"2. Simulated Annealing\n"
 			"3. Tabu Search\n"
 			"4. Exit\n"
 			"*******************************************\n";
 
-			string filename = "";
-
+		string filename = "";
+		cin >> chosenOption;
 		switch (chosenOption)
 		{
-			case 1:
+		case 1:
+		{
+			cout << "Enter file name: ";
+
+			filename = R"(./test5.txt)";
+			//cin >> filename;
+			graph.readFromFile(filename);
+			isGraphLoaded = true;
+		}break;
+
+		case 2:
+		{
+			if (!isGraphLoaded)
 			{
-				cout << "Enter file name: ";
-				
-				cin >> filename;
-				graph.readFromFile(filename);
-
-			}break;
-
-			case 2:
+				cout << "Input graph first\n";
+				continue;
+			}
+			else
 			{
-				if (filename == "")
-				{
-					cout << "Input graph first\n";
-					continue;
-				}
-				else
-				{
-					do {
-						delta = 0.0;
-						cout << "Enter delta temperature: ";
-						cin >> delta;
-						cout << "Enter time limit:";
-						cin >> timeLimit;
-					} while (delta == 0.0 || timeLimit == 0.0);
+				do {
+					delta = 0.0;
+					cout << "Enter delta temperature: ";
+					cin >> delta;
+					cout << "Enter time limit: ";
+					cin >> timeLimit;
+				} while (delta == 0.0 || timeLimit == 0.0);
 
-					SimulatedAnnealing simAnnealing(graph, timeLimit, delta);
-					simAnnealing.execute();
-					cin.get();
-				}
-			}break;
+				SimulatedAnnealing simAnnealing(graph, timeLimit, delta);
+				simAnnealing.execute();
+				cin.get();
+			}
+		}break;
 
-			case 3:
-			{
+		case 3:
+		{
 
-			}break;
+		}break;
 
-			case 4:
-			{
+		case 4:
+		{
+			graph.display();
+		}break;
 
-			}break;
-
-			default:
-				break;
+		default:
+			break;
 		}
 	}
-	
-	
+
 
 	return 0;
 }
